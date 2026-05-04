@@ -1,0 +1,2640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Budget">
+<meta name="theme-color" content="#7C3AED">
+<link rel="manifest" href="manifest.json">
+<title>Budget</title>
+
+<style>
+:root{
+  --bg:#F6F7FB;
+  --card:#FFFFFF;
+  --card2:#F1F3F8;
+  --bord:#E4E7F0;
+  --txt:#111827;
+  --mut:#7C8297;
+  --soft:#A5ADC0;
+  --dim:#E9ECF4;
+  --red:#EF4444;
+  --grn:#10B981;
+  --acc:#7C3AED;
+  --acc2:#F3EEFF;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+  padding-top:env(safe-area-inset-top,26px);
+  padding-bottom:env(safe-area-inset-bottom,18px);
+  min-height:100vh;
+  overflow:hidden;
+}
+
+.screen{
+  display:none;
+  flex-direction:column;
+  height:calc(100vh - env(safe-area-inset-top,26px) - env(safe-area-inset-bottom,18px));
+  padding:0 14px;
+  overflow:hidden;
+}
+
+.screen.on{
+  display:flex;
+}
+
+.hdr{
+  padding:9px 0 5px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  flex-shrink:0;
+}
+
+.hdr-left{
+  min-width:0;
+}
+
+.hdr-t{
+  font-size:14px;
+  font-weight:850;
+  color:var(--acc);
+  letter-spacing:.08em;
+  line-height:1.2;
+}
+
+.hdr-m{
+  font-size:12px;
+  color:var(--mut);
+  font-weight:750;
+  letter-spacing:.05em;
+  line-height:1.2;
+  margin-top:2px;
+}
+
+.top-btn{
+  border:.5px solid var(--bord);
+  background:rgba(255,255,255,.7);
+  color:var(--acc);
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.06em;
+  -webkit-appearance:none;
+  box-shadow:0 3px 10px rgba(17,24,39,.04);
+  flex-shrink:0;
+}
+
+.top-btn:active{
+  transform:scale(.96);
+  opacity:.8;
+}
+
+.hdr-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+
+.hero{
+  padding:4px 0 12px;
+  flex-shrink:0;
+}
+
+.hero-lbl{
+  font-size:11px;
+  font-weight:850;
+  color:var(--mut);
+  letter-spacing:.12em;
+  margin-bottom:3px;
+}
+
+.hero-amt{
+  font-size:36px;
+  font-weight:850;
+  line-height:.95;
+  letter-spacing:-1.5px;
+  color:var(--txt);
+}
+
+.hero-sub{
+  font-size:13px;
+  color:var(--mut);
+  margin-top:5px;
+  font-weight:650;
+}
+
+.hero-health{
+  margin-top:4px;
+  display:block;
+  max-width:100%;
+  color:var(--mut);
+  font-size:12px;
+  font-weight:750;
+  line-height:1.25;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.gbar{
+  height:4px;
+  background:var(--dim);
+  border-radius:99px;
+  margin-bottom:12px;
+  overflow:hidden;
+  flex-shrink:0;
+}
+
+.gbar-f{
+  height:100%;
+  border-radius:99px;
+  transition:width .35s;
+}
+
+.cats{
+  flex:1;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding-bottom:8px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.cc{
+  background:var(--card);
+  border:.5px solid var(--bord);
+  border-radius:15px;
+  padding:11px 12px;
+  cursor:pointer;
+  flex-shrink:0;
+  box-shadow:0 4px 14px rgba(17,24,39,.035);
+}
+
+.cc:active{
+  opacity:.78;
+  transform:scale(.99);
+}
+
+.cc-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  gap:8px;
+}
+
+.cc-l{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+
+.cc-icon{
+  width:30px;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  border-radius:9px;
+  background:var(--card2);
+  flex-shrink:0;
+}
+
+.cc-name{
+  font-size:15px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:155px;
+}
+
+.cc-pct{
+  font-size:11px;
+  color:var(--mut);
+  margin-top:2px;
+  font-weight:750;
+  letter-spacing:.04em;
+}
+
+.cc-r{
+  text-align:right;
+  flex-shrink:0;
+}
+
+.cc-spent{
+  font-size:16px;
+  font-weight:850;
+}
+
+.cc-budget{
+  font-size:12px;
+  color:var(--mut);
+  margin-top:1px;
+  font-weight:650;
+}
+
+.bar-bg{
+  height:4px;
+  background:var(--dim);
+  border-radius:99px;
+  overflow:hidden;
+}
+
+.bar-f{
+  height:100%;
+  border-radius:99px;
+  transition:width .3s;
+}
+
+.nav{
+  display:flex;
+  padding:7px 0 2px;
+  border-top:.5px solid var(--bord);
+  margin-top:auto;
+  flex-shrink:0;
+  gap:4px;
+}
+
+.nb{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  padding:7px 0 6px;
+  border:none;
+  background:none;
+  color:var(--mut);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.03em;
+  cursor:pointer;
+  -webkit-appearance:none;
+  border-radius:12px;
+  transition:background .15s,color .15s,transform .15s;
+}
+
+.nb.on{
+  color:var(--acc);
+  background:var(--acc2);
+}
+
+.nb:active{
+  transform:scale(.96);
+  background:var(--acc2);
+}
+
+.ni{
+  font-size:20px;
+  line-height:1;
+}
+
+.add-hdr{
+  padding:9px 0 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+
+.back{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:var(--card);
+  border:.5px solid var(--bord);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  cursor:pointer;
+  color:var(--txt);
+  -webkit-appearance:none;
+  flex-shrink:0;
+  box-shadow:0 3px 10px rgba(17,24,39,.04);
+}
+
+.back:active{
+  transform:scale(.94);
+}
+
+.add-ttl{
+  font-size:20px;
+  font-weight:850;
+  flex:1;
+  min-width:0;
+}
+
+.sec-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+.sec-lbl{
+  font-size:12px;
+  font-weight:850;
+  color:var(--mut);
+  letter-spacing:.09em;
+  margin-bottom:8px;
+}
+
+.sec-row .sec-lbl{
+  margin-bottom:0;
+}
+
+.link-btn{
+  border:none;
+  background:none;
+  color:var(--acc);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.06em;
+  -webkit-appearance:none;
+}
+
+.gear-btn{
+  width:34px;
+  height:30px;
+  border:.5px solid var(--bord);
+  background:var(--card);
+  color:var(--acc);
+  border-radius:999px;
+  font-size:15px;
+  font-weight:900;
+  -webkit-appearance:none;
+  box-shadow:0 3px 10px rgba(17,24,39,.035);
+}
+
+.gear-btn:active{
+  transform:scale(.95);
+  opacity:.82;
+}
+
+.add-clean-hdr{
+  padding-bottom:12px;
+}
+
+.preset-wrap{
+  margin-bottom:12px;
+  flex-shrink:0;
+}
+
+.preset-wrap.compact{
+  margin-bottom:16px;
+}
+
+.presets{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding-bottom:2px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.preset-btn{
+  flex-shrink:0;
+  border:.5px solid var(--bord);
+  background:var(--card);
+  color:var(--txt);
+  border-radius:13px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:850;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  box-shadow:0 3px 10px rgba(17,24,39,.035);
+  -webkit-appearance:none;
+}
+
+.preset-btn span{
+  color:var(--mut);
+  font-size:11px;
+}
+
+.preset-btn:active{
+  transform:scale(.96);
+  opacity:.85;
+}
+
+.cat-select-wrap{
+  margin-bottom:14px;
+  flex-shrink:0;
+}
+
+.selected-cat{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--card);
+  border:.5px solid var(--bord);
+  border-radius:16px;
+  padding:12px 13px;
+  box-shadow:0 4px 14px rgba(17,24,39,.035);
+  color:var(--txt);
+  -webkit-appearance:none;
+  text-align:left;
+}
+
+.selected-cat:active{
+  transform:scale(.99);
+  opacity:.82;
+}
+
+.selected-cat-icon{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:var(--card2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+.selected-cat-text{
+  flex:1;
+  min-width:0;
+  font-size:17px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.selected-cat-arrow{
+  color:var(--mut);
+  font-size:24px;
+  font-weight:750;
+  line-height:1;
+  flex-shrink:0;
+}
+
+.cat-picker-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height:360px;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.cat-picker-item{
+  width:100%;
+  border:.5px solid var(--bord);
+  background:var(--card);
+  color:var(--txt);
+  border-radius:15px;
+  padding:11px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  -webkit-appearance:none;
+  text-align:left;
+}
+
+.cat-picker-item.sel{
+  border-color:var(--sc);
+  background:var(--sb);
+  color:var(--sc);
+}
+
+.cat-picker-item:active{
+  transform:scale(.99);
+  opacity:.84;
+}
+
+.cat-picker-icon{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:var(--card2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+.cat-picker-name{
+  flex:1;
+  font-size:16px;
+  font-weight:900;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.cat-picker-budget{
+  color:var(--mut);
+  font-size:12px;
+  font-weight:800;
+  flex-shrink:0;
+}
+
+.pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:14px;
+  max-height:120px;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  flex-shrink:0;
+}
+
+.pill{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:7px 12px;
+  border-radius:999px;
+  background:var(--card);
+  border:.5px solid var(--bord);
+  font-size:14px;
+  font-weight:750;
+  color:var(--mut);
+  cursor:pointer;
+  -webkit-appearance:none;
+  transition:all .15s;
+  box-shadow:0 2px 8px rgba(17,24,39,.025);
+}
+
+.pill.sel{
+  border-color:var(--sc);
+  color:var(--sc);
+  background:var(--sb);
+}
+
+.pill:active{
+  transform:scale(.96);
+}
+
+.ig{
+  margin-bottom:10px;
+  flex-shrink:0;
+}
+
+.il{
+  font-size:12px;
+  font-weight:850;
+  color:var(--mut);
+  letter-spacing:.07em;
+  margin-bottom:6px;
+}
+
+.ifield{
+  width:100%;
+  background:var(--card);
+  border:.5px solid var(--bord);
+  border-radius:13px;
+  padding:12px;
+  font-size:16px;
+  font-weight:750;
+  color:var(--txt);
+  -webkit-appearance:none;
+  outline:none;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+  transition:border-color .2s,box-shadow .2s;
+  box-shadow:0 3px 12px rgba(17,24,39,.025);
+}
+
+.ifield:focus{
+  border-color:var(--acc);
+  box-shadow:0 0 0 3px rgba(124,58,237,.12);
+}
+
+.ifield::placeholder{
+  color:var(--soft);
+  font-weight:550;
+}
+
+.emoji-mini{
+  width:92px;
+  min-width:92px;
+  height:44px;
+  padding:0 10px;
+  text-align:center;
+  font-size:15px;
+  font-weight:850;
+  line-height:44px;
+  border-radius:14px;
+  background:var(--card);
+  box-shadow:0 3px 12px rgba(17,24,39,.025);
+}
+
+.emoji-mini:focus{
+  border-color:var(--acc);
+  box-shadow:0 0 0 3px rgba(124,58,237,.10);
+}
+
+.emoji-mini::placeholder{
+  color:#9AA1B6;
+  font-size:15px;
+  font-weight:850;
+}
+
+.emoji-mini:not(:placeholder-shown){
+  font-size:22px;
+}
+
+.sbtn{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  background:var(--acc);
+  color:#fff;
+  font-size:15px;
+  font-weight:850;
+  cursor:pointer;
+  margin-top:3px;
+  -webkit-appearance:none;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+  flex-shrink:0;
+  box-shadow:0 7px 16px rgba(124,58,237,.20);
+}
+
+.sbtn:active{
+  opacity:.88;
+  transform:scale(.99);
+}
+
+.sbtn:disabled{
+  opacity:.35;
+  box-shadow:none;
+}
+
+.log-list{
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.li{
+  display:flex;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:.5px solid var(--bord);
+  gap:9px;
+  cursor:pointer;
+}
+
+.li:last-child{
+  border-bottom:none;
+}
+
+.li:active{
+  opacity:.75;
+}
+
+.li-ico{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+.li-info{
+  flex:1;
+  min-width:0;
+}
+
+.li-desc{
+  font-size:15px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.li-meta{
+  font-size:12px;
+  color:var(--mut);
+  margin-top:2px;
+  font-weight:650;
+}
+
+.li-r{
+  text-align:right;
+  flex-shrink:0;
+}
+
+.li-amt{
+  font-size:16px;
+  font-weight:850;
+}
+
+.li-date{
+  font-size:12px;
+  color:var(--mut);
+  margin-top:2px;
+  font-weight:650;
+}
+
+.delbtn{
+  width:27px;
+  height:27px;
+  border-radius:50%;
+  background:#FFF1F2;
+  border:.5px solid #FFE4E6;
+  color:var(--red);
+  font-size:16px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  -webkit-appearance:none;
+}
+
+.cat-screen-body{
+  flex:1;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.cat-form{
+  background:var(--card);
+  border:.5px solid var(--bord);
+  border-radius:15px;
+  padding:11px;
+  margin-bottom:10px;
+  flex-shrink:0;
+  box-shadow:0 4px 14px rgba(17,24,39,.035);
+}
+
+.cat-row-inputs{
+  display:grid;
+  grid-template-columns:92px 1fr;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.cat-budget-wrap{
+  margin-bottom:6px;
+}
+
+.cat-list{
+  flex:1;
+  overflow-y:auto;
+  padding-bottom:8px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.cat-card{
+  background:var(--card);
+  border:.5px solid var(--bord);
+  border-radius:14px;
+  padding:10px 11px;
+  margin-bottom:8px;
+  box-shadow:0 4px 14px rgba(17,24,39,.03);
+}
+
+.cat-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.cat-dot{
+  width:10px;
+  height:10px;
+  border-radius:99px;
+  flex-shrink:0;
+}
+
+.cat-title{
+  font-size:15px;
+  font-weight:850;
+  flex:1;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.cat-budget{
+  font-size:13px;
+  color:var(--mut);
+  font-weight:750;
+}
+
+.cat-actions{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+.mini-in{
+  flex:1;
+  background:var(--card2);
+  border:.5px solid var(--bord);
+  border-radius:12px;
+  padding:9px 10px;
+  font-size:13px;
+  font-weight:800;
+  color:var(--txt);
+  outline:none;
+  -webkit-appearance:none;
+  min-width:0;
+}
+
+.mini-in:focus{
+  border-color:var(--acc);
+}
+
+.mini-save{
+  display:none;
+  border:none;
+  border-radius:12px;
+  padding:9px 10px;
+  background:var(--acc);
+  color:white;
+  font-weight:850;
+  font-size:13px;
+  -webkit-appearance:none;
+}
+
+.mini-save.show{
+  display:block;
+}
+
+.mini-del{
+  border:.5px solid #FFE4E6;
+  border-radius:12px;
+  padding:9px 10px;
+  background:#FFF1F2;
+  color:var(--red);
+  font-weight:850;
+  font-size:13px;
+  -webkit-appearance:none;
+}
+
+.preset-screen-body{
+  flex:1;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.preset-form{
+  background:var(--card);
+  border:.5px solid var(--bord);
+  border-radius:15px;
+  padding:11px;
+  margin-bottom:10px;
+  flex-shrink:0;
+  box-shadow:0 4px 14px rgba(17,24,39,.035);
+}
+
+.preset-row-inputs{
+  display:grid;
+  grid-template-columns:92px 1fr;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.preset-cats{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  max-height:92px;
+  overflow-y:auto;
+  margin-bottom:10px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.preset-cat-pill{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:var(--card2);
+  border:.5px solid var(--bord);
+  font-size:13px;
+  font-weight:800;
+  color:var(--mut);
+  -webkit-appearance:none;
+}
+
+.preset-cat-pill.sel{
+  background:var(--sb);
+  color:var(--sc);
+  border-color:var(--sc);
+}
+
+.preset-list{
+  flex:1;
+  overflow-y:auto;
+  padding-bottom:8px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.preset-card{
+  background:var(--card);
+  border:.5px solid var(--bord);
+  border-radius:14px;
+  padding:10px 11px;
+  margin-bottom:8px;
+  box-shadow:0 4px 14px rgba(17,24,39,.03);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.preset-card-icon{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:var(--card2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+.preset-card-info{
+  flex:1;
+  min-width:0;
+}
+
+.preset-card-title{
+  font-size:15px;
+  font-weight:850;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.preset-card-meta{
+  font-size:12px;
+  color:var(--mut);
+  margin-top:2px;
+  font-weight:700;
+}
+
+.preset-card-del{
+  border:.5px solid #FFE4E6;
+  border-radius:12px;
+  padding:9px 10px;
+  background:#FFF1F2;
+  color:var(--red);
+  font-weight:850;
+  font-size:13px;
+  -webkit-appearance:none;
+}
+
+.wish-actions{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  flex-shrink:0;
+}
+
+.wish-buy{
+  border:none;
+  border-radius:12px;
+  padding:9px 10px;
+  background:var(--grn);
+  color:white;
+  font-weight:850;
+  font-size:13px;
+  -webkit-appearance:none;
+}
+
+.wish-edit{
+  border:.5px solid var(--bord);
+  border-radius:12px;
+  padding:9px 10px;
+  background:var(--card2);
+  color:var(--acc);
+  font-weight:850;
+  font-size:13px;
+  -webkit-appearance:none;
+}
+
+.wish-del{
+  border:.5px solid #FFE4E6;
+  border-radius:12px;
+  padding:9px 10px;
+  background:#FFF1F2;
+  color:var(--red);
+  font-weight:850;
+  font-size:13px;
+  -webkit-appearance:none;
+}
+
+.empty{
+  flex:1;
+  min-height:180px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  color:var(--mut);
+  text-align:center;
+}
+
+.empty-i{
+  font-size:34px;
+}
+
+.empty-t{
+  font-size:15px;
+  font-weight:750;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(17,24,39,.38);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:50;
+  padding:14px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.sheet{
+  width:100%;
+  background:var(--card);
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 18px 40px rgba(17,24,39,.22);
+  border:.5px solid rgba(255,255,255,.35);
+}
+
+.sheet-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.sheet-title{
+  font-size:19px;
+  font-weight:900;
+  letter-spacing:-.3px;
+}
+
+.sheet-close{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:.5px solid var(--bord);
+  background:var(--card2);
+  color:var(--txt);
+  font-size:19px;
+  font-weight:850;
+  -webkit-appearance:none;
+}
+
+.edit-cats{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:12px;
+  max-height:108px;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.edit-pill{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:var(--card2);
+  border:.5px solid var(--bord);
+  font-size:13px;
+  font-weight:800;
+  color:var(--mut);
+  -webkit-appearance:none;
+}
+
+.edit-pill.sel{
+  background:var(--sb);
+  color:var(--sc);
+  border-color:var(--sc);
+}
+
+.sheet-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:6px;
+}
+
+.sheet-save{
+  border:none;
+  border-radius:14px;
+  padding:13px;
+  background:var(--acc);
+  color:white;
+  font-weight:900;
+  font-size:15px;
+  -webkit-appearance:none;
+}
+
+.sheet-preset{
+  border:.5px solid var(--bord);
+  border-radius:14px;
+  padding:13px;
+  background:var(--card2);
+  color:var(--acc);
+  font-weight:900;
+  font-size:15px;
+  -webkit-appearance:none;
+  margin-top:8px;
+  width:100%;
+}
+
+.sheet-delete{
+  border:.5px solid #FFE4E6;
+  border-radius:14px;
+  padding:13px;
+  background:#FFF1F2;
+  color:var(--red);
+  font-weight:900;
+  font-size:15px;
+  -webkit-appearance:none;
+}
+
+.toast{
+  position:fixed;
+  bottom:86px;
+  left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:#111827;
+  color:#FFFFFF;
+  padding:10px 16px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:800;
+  opacity:0;
+  transition:all .25s;
+  pointer-events:none;
+  white-space:nowrap;
+  border:.5px solid rgba(255,255,255,.12);
+  z-index:80;
+  box-shadow:0 10px 24px rgba(17,24,39,.18);
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+<div class="screen on" id="s-home">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-t">◈ BUDGET</div>
+      <div class="hdr-m" id="mes-label"></div>
+    </div>
+    <div class="hdr-actions">
+      <button class="top-btn" onclick="go('wishes')">WISHES</button>
+      <button class="top-btn" onclick="go('cats')">CATS</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-lbl" id="hero-lbl">DISPONIBLE</div>
+    <div class="hero-amt" id="hero-amt">$0</div>
+    <div class="hero-sub" id="hero-sub"></div>
+    <div class="hero-health" id="hero-health"></div>
+  </div>
+
+  <div class="gbar">
+    <div class="gbar-f" id="gbar-f" style="width:0%"></div>
+  </div>
+
+  <div class="cats" id="cats"></div>
+
+  <div class="nav">
+    <button class="nb on" data-tab="home" onclick="go('home')"><span class="ni">◉</span>INICIO</button>
+    <button class="nb" data-tab="add" onclick="go('add')"><span class="ni">＋</span>GASTO</button>
+    <button class="nb" data-tab="log" onclick="go('log')"><span class="ni">≡</span>LOG</button>
+  </div>
+</div>
+
+<!-- ADD -->
+<div class="screen" id="s-add">
+  <div class="hdr add-clean-hdr">
+    <div class="hdr-left">
+      <div class="hdr-t">NUEVO GASTO</div>
+      <div class="hdr-m">AGREGAR MOVIMIENTO</div>
+    </div>
+  </div>
+
+  <div class="preset-wrap compact">
+    <div class="sec-row">
+      <div class="sec-lbl">PRESETS RÁPIDOS</div>
+      <button class="gear-btn" onclick="go('presets')">⚙</button>
+    </div>
+    <div class="presets" id="presets"></div>
+  </div>
+
+  <div class="cat-select-wrap">
+    <div class="sec-row">
+      <div class="sec-lbl">CATEGORÍA</div>
+      <button class="link-btn" onclick="openCatPicker()">CAMBIAR</button>
+    </div>
+
+    <button class="selected-cat" id="selected-cat" onclick="openCatPicker()">
+      <span class="selected-cat-icon">＋</span>
+      <span class="selected-cat-text">Elige una categoría</span>
+      <span class="selected-cat-arrow">›</span>
+    </button>
+  </div>
+
+  <div class="ig">
+    <div class="il">MONTO</div>
+    <input class="ifield" id="in-amt" type="number" inputmode="decimal" placeholder="$0.00" oninput="chk()">
+  </div>
+
+  <div class="ig">
+    <div class="il">DESCRIPCIÓN</div>
+    <input class="ifield" id="in-desc" type="text" placeholder="ej. Starbucks">
+  </div>
+
+  <button class="sbtn" id="sbtn" onclick="doSave()" disabled>Guardar gasto</button>
+
+  <div class="nav">
+    <button class="nb" data-tab="home" onclick="go('home')"><span class="ni">◉</span>INICIO</button>
+    <button class="nb on" data-tab="add" onclick="go('add')"><span class="ni">＋</span>GASTO</button>
+    <button class="nb" data-tab="log" onclick="go('log')"><span class="ni">≡</span>LOG</button>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="screen" id="s-cats">
+  <div class="add-hdr">
+    <button class="back" onclick="go('home')">‹</button>
+    <span class="add-ttl">Categorías</span>
+  </div>
+
+  <div class="cat-screen-body">
+    <div class="cat-form">
+      <div class="sec-lbl">NUEVA CATEGORÍA</div>
+
+      <div class="cat-row-inputs">
+        <input class="ifield emoji-mini" id="cat-icon" type="text" maxlength="2" placeholder="Emoji" oninput="chkCat()">
+        <input class="ifield" id="cat-label" type="text" placeholder="Nombre" oninput="chkCat()">
+      </div>
+
+      <div class="cat-budget-wrap">
+        <input class="ifield" id="cat-budget" type="number" inputmode="decimal" placeholder="Budget mensual" oninput="chkCat()">
+      </div>
+
+      <button class="sbtn" id="cat-btn" onclick="addCategory()" disabled>Agregar</button>
+    </div>
+
+    <div class="cat-list" id="cat-list"></div>
+  </div>
+</div>
+
+<!-- PRESETS MANAGER -->
+<div class="screen" id="s-presets">
+  <div class="add-hdr">
+    <button class="back" onclick="go('add')">‹</button>
+    <span class="add-ttl">Presets</span>
+  </div>
+
+  <div class="preset-screen-body">
+    <div class="preset-form">
+      <div class="sec-lbl">NUEVO PRESET</div>
+
+      <div class="preset-row-inputs">
+        <input class="ifield emoji-mini" id="preset-icon" type="text" maxlength="2" placeholder="Emoji" oninput="chkPreset()">
+        <input class="ifield" id="preset-desc" type="text" placeholder="Nombre / descripción" oninput="chkPreset()">
+      </div>
+
+      <div class="ig">
+        <input class="ifield" id="preset-amt" type="number" inputmode="decimal" placeholder="Monto" oninput="chkPreset()">
+      </div>
+
+      <div class="il">CATEGORÍA</div>
+      <div class="preset-cats" id="preset-cats"></div>
+
+      <button class="sbtn" id="preset-btn" onclick="addPreset()" disabled>Guardar preset</button>
+    </div>
+
+    <div class="preset-list" id="preset-list"></div>
+  </div>
+</div>
+
+<!-- WISHLIST MANAGER -->
+<div class="screen" id="s-wishes">
+  <div class="add-hdr">
+    <button class="back" onclick="go('home')">‹</button>
+    <span class="add-ttl">Wishlist</span>
+  </div>
+
+  <div class="preset-screen-body">
+    <div class="preset-form">
+      <div class="sec-lbl">NUEVO WISH</div>
+
+      <div class="preset-row-inputs">
+        <input class="ifield emoji-mini" id="wish-icon" type="text" maxlength="2" placeholder="Emoji" oninput="chkWish()">
+        <input class="ifield" id="wish-desc" type="text" placeholder="Qué quieres comprar" oninput="chkWish()">
+      </div>
+
+      <div class="ig">
+        <input class="ifield" id="wish-amt" type="number" inputmode="decimal" placeholder="Monto estimado" oninput="chkWish()">
+      </div>
+
+      <div class="il">CATEGORÍA CUANDO LO COMPRES</div>
+      <div class="preset-cats" id="wish-cats"></div>
+
+      <button class="sbtn" id="wish-btn" onclick="addWish()" disabled>Guardar wish</button>
+    </div>
+
+    <div class="preset-list" id="wish-list"></div>
+  </div>
+</div>
+
+<!-- LOG -->
+<div class="screen" id="s-log">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-t">HISTORIAL</div>
+      <div class="hdr-m">TOCA UN GASTO PARA EDITAR</div>
+    </div>
+    <button class="top-btn" onclick="go('cats')">CATS</button>
+  </div>
+
+  <div class="log-list" id="log-list"></div>
+
+  <div class="nav">
+    <button class="nb" data-tab="home" onclick="go('home')"><span class="ni">◉</span>INICIO</button>
+    <button class="nb" data-tab="add" onclick="go('add')"><span class="ni">＋</span>GASTO</button>
+    <button class="nb on" data-tab="log" onclick="go('log')"><span class="ni">≡</span>LOG</button>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal" id="edit-modal">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="sheet-title">Editar gasto</div>
+      <button class="sheet-close" onclick="closeEdit()">×</button>
+    </div>
+
+    <div class="ig">
+      <div class="il">DESCRIPCIÓN</div>
+      <input class="ifield" id="edit-desc" type="text" placeholder="Descripción">
+    </div>
+
+    <div class="ig">
+      <div class="il">MONTO</div>
+      <input class="ifield" id="edit-amt" type="number" inputmode="decimal" placeholder="$0.00">
+    </div>
+
+    <div class="il">CATEGORÍA</div>
+    <div class="edit-cats" id="edit-cats"></div>
+
+    <div class="sheet-actions">
+      <button class="sheet-delete" onclick="deleteEditingEntry()">Borrar</button>
+      <button class="sheet-save" onclick="saveEditingEntry()">Guardar</button>
+    </div>
+
+    <button class="sheet-preset" onclick="saveEditingAsPreset()">Guardar como preset</button>
+  </div>
+</div>
+
+<!-- WISH EDIT MODAL -->
+<div class="modal" id="wish-edit-modal">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="sheet-title">Editar wish</div>
+      <button class="sheet-close" onclick="closeWishEdit()">×</button>
+    </div>
+
+    <div class="preset-row-inputs">
+      <input class="ifield emoji-mini" id="wish-edit-icon" type="text" maxlength="2" placeholder="Emoji">
+      <input class="ifield" id="wish-edit-desc" type="text" placeholder="Qué quieres comprar">
+    </div>
+
+    <div class="ig">
+      <div class="il">MONTO ESTIMADO</div>
+      <input class="ifield" id="wish-edit-amt" type="number" inputmode="decimal" placeholder="$0.00">
+    </div>
+
+    <div class="il">CATEGORÍA CUANDO LO COMPRES</div>
+    <div class="edit-cats" id="wish-edit-cats"></div>
+
+    <div class="sheet-actions">
+      <button class="sheet-delete" onclick="deleteEditingWish()">Borrar</button>
+      <button class="sheet-save" onclick="saveEditingWish()">Guardar</button>
+    </div>
+
+    <button class="sheet-preset" onclick="buyEditingWish()">Comprar ahora</button>
+  </div>
+</div>
+
+<!-- CATEGORY PICKER MODAL -->
+<div class="modal" id="cat-picker-modal">
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="sheet-title">Cambiar categoría</div>
+      <button class="sheet-close" onclick="closeCatPicker()">×</button>
+    </div>
+
+    <div class="cat-picker-list" id="cat-picker-list"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DEFAULT DATA ─────────────────────────────────────────
+const DEFAULT_BUDGETS = [
+  { id: "cafe",       label: "Cafés",                icon: "☕", budget: 50,  color: "#F59E0B" },
+  { id: "rest",       label: "Restaurantes",         icon: "🍽", budget: 200, color: "#EF4444" },
+  { id: "uber",       label: "Uber",                 icon: "🚗", budget: 20,  color: "#10B981" },
+  { id: "online",     label: "Compras Online",       icon: "📦", budget: 100, color: "#3B82F6" },
+  { id: "growth_lab", label: "Business Experiments", icon: "🧪", budget: 15,  color: "#8B5CF6" },
+]
+
+const DEFAULT_PRESETS = [
+  { id: "preset_starbucks", desc: "Starbucks", amt: 5.50,  cat: "cafe", icon: "☕" },
+  { id: "preset_uber",      desc: "Uber",      amt: 6.00,  cat: "uber", icon: "🚗" },
+  { id: "preset_lunch",     desc: "Lunch",     amt: 12.00, cat: "rest", icon: "🍽" },
+]
+
+// ─── UTILITIES ────────────────────────────────────────────
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+
+function hslToHex(h, s, l) {
+  s /= 100
+  l /= 100
+  const k = n => (n + h / 30) % 12
+  const a = s * Math.min(l, 1 - l)
+  const f = n => {
+    const c = l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))
+    return Math.round(255 * c).toString(16).padStart(2, '0')
+  }
+  return ('#' + f(0) + f(8) + f(4)).toUpperCase()
+}
+
+function generatedCategoryColor(index) {
+  const i = Math.max(0, Number(index) || 0)
+  const hue = (i * 137.508) % 360
+  const saturation = 68 + ((i * 17) % 18)
+  const lightness = 46 + ((i * 11) % 10)
+  return hslToHex(hue, saturation, lightness)
+}
+
+function nextCategoryColor() {
+  const used = (ST.budgets || []).map(b => String(b.color || '').toUpperCase())
+  let i = (ST.budgets || []).length
+  for (let attempts = 0; attempts < 500; attempts++) {
+    const color = generatedCategoryColor(i + attempts)
+    if (!used.includes(color.toUpperCase())) return color
+  }
+  return generatedCategoryColor(Date.now() % 100000)
+}
+
+// ─── DATA SHAPE ───────────────────────────────────────────
+function ensureDataShape(d) {
+  if (!d || typeof d !== "object" || Array.isArray(d)) d = {}
+
+  if (!d._settings || typeof d._settings !== "object") {
+    d._settings = {}
+  }
+
+  if (!Array.isArray(d._settings.budgets) || d._settings.budgets.length === 0) {
+    d._settings.budgets = clone(DEFAULT_BUDGETS)
+  }
+
+  d._settings.budgets = d._settings.budgets
+    .filter(b => b && b.id && b.label)
+    .map(b => ({
+      id: String(b.id),
+      label: String(b.label),
+      icon: String(b.icon || "🏷️"),
+      budget: Number(b.budget) || 0,
+      color: /^#[0-9A-Fa-f]{6}$/.test(String(b.color || "")) ? String(b.color) : "#8B5CF6"
+    }))
+
+  if (!Array.isArray(d._settings.deletedPresetIds)) {
+    d._settings.deletedPresetIds = []
+  }
+
+  d._settings.deletedPresetIds = d._settings.deletedPresetIds
+    .filter(Boolean).map(x => String(x))
+
+  if (!Array.isArray(d._settings.presets)) {
+    d._settings.presets = []
+  }
+
+  DEFAULT_PRESETS.forEach(p => {
+    const wasDeleted = d._settings.deletedPresetIds.includes(String(p.id))
+    const exists = d._settings.presets.some(x => x && String(x.id) === String(p.id))
+    if (!wasDeleted && !exists) {
+      d._settings.presets.push(clone(p))
+    }
+  })
+
+  d._settings.presets = d._settings.presets
+    .filter(p => p && p.id && p.desc)
+    .map(p => ({
+      id: String(p.id),
+      desc: String(p.desc || "Gasto"),
+      amt: Number(p.amt) || 0,
+      cat: String(p.cat || ""),
+      icon: String(p.icon || "⚡")
+    }))
+    .filter(p => p.amt > 0)
+
+  if (!Array.isArray(d._settings.wishes)) {
+    d._settings.wishes = []
+  }
+
+  d._settings.wishes = d._settings.wishes
+    .filter(w => w && w.id && w.desc)
+    .map(w => ({
+      id: String(w.id),
+      desc: String(w.desc || "Wish"),
+      amt: Number(w.amt) || 0,
+      cat: String(w.cat || ""),
+      icon: String(w.icon || "✨")
+    }))
+    .filter(w => w.amt > 0)
+
+  return d
+}
+
+function calcState(data, key) {
+  data = ensureDataShape(data)
+  const budgets = data._settings.budgets
+  const presets = data._settings.presets
+  const wishes  = data._settings.wishes
+  const entries = Array.isArray(data[key]) ? data[key] : []
+  const spent   = {}
+  budgets.forEach(b => spent[b.id] = 0)
+  entries.forEach(e => {
+    const cat = e.cat || "uncategorized"
+    spent[cat] = (spent[cat] || 0) + (Number(e.amt) || 0)
+  })
+  return { budgets, presets, wishes, entries, spent }
+}
+
+function monthKey() {
+  const d = new Date()
+  return `${d.getFullYear()}-${d.getMonth()}`
+}
+
+// ─── STORAGE ──────────────────────────────────────────────
+const STORAGE_KEY = 'budget_v5'
+
+function loadRawData() {
+  try {
+    return ensureDataShape(JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'))
+  } catch(e) {
+    return ensureDataShape({})
+  }
+}
+
+let _data = loadRawData()
+const _key = monthKey()
+let ST = calcState(_data, _key)
+
+function persistState() {
+  _data._settings.budgets = ST.budgets
+  _data._settings.presets = ST.presets
+  _data._settings.wishes  = ST.wishes
+  _data[_key]             = ST.entries
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(_data))
+}
+
+// ─── UI STATE ─────────────────────────────────────────────
+let selCat        = null
+let editingId     = null
+let editingCat    = null
+let editingWishId = null
+let editingWishCat = null
+let newPresetCat  = null
+let newWishCat    = null
+
+// ─── MONTH LABEL ──────────────────────────────────────────
+;(function() {
+  const label = new Date()
+    .toLocaleDateString("es-MX", { month: "long", year: "numeric" })
+    .replace(/^\w/, c => c.toUpperCase())
+  document.getElementById('mes-label').textContent = label.toUpperCase()
+})()
+
+// ─── HELPERS ──────────────────────────────────────────────
+function fmt(n) {
+  return '$' + (Number(n) || 0).toFixed(2)
+}
+
+function money0(n) {
+  return '$' + Math.round(Number(n) || 0)
+}
+
+function esc(v) {
+  const s = v === undefined || v === null ? '' : String(v)
+  return s.replace(/[&<>'"]/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[c]))
+}
+
+function cssColor(v) {
+  return /^#[0-9A-Fa-f]{6}$/.test(String(v || '')) ? v : '#8B5CF6'
+}
+
+function catById(id) {
+  return ST.budgets.find(x => x.id === id)
+}
+
+function entryById(id) {
+  return (ST.entries || []).find(x => Number(x.id) === Number(id))
+}
+
+function presetById(id) {
+  return (ST.presets || []).find(x => x.id === id)
+}
+
+function wishById(id) {
+  return (ST.wishes || []).find(x => x.id === id)
+}
+
+function makeClientCatId(label) {
+  let base = String(label || "cat")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+  if (!base) base = "cat"
+  let id = base
+  let n = 2
+  while (ST.budgets.some(b => b.id === id)) { id = base + "_" + n; n++ }
+  return id
+}
+
+function makeClientPresetId(desc) {
+  let base = String(desc || "preset")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+  if (!base) base = "preset"
+  if (!base.startsWith("preset_")) base = "preset_" + base
+  let id = base
+  let n = 2
+  while ((ST.presets || []).some(p => p.id === id)) { id = base + "_" + n; n++ }
+  return id
+}
+
+function makeClientWishId(desc) {
+  let base = String(desc || "wish")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+  if (!base) base = "wish"
+  if (!base.startsWith("wish_")) base = "wish_" + base
+  let id = base
+  let n = 2
+  while ((ST.wishes || []).some(w => w.id === id)) { id = base + "_" + n; n++ }
+  return id
+}
+
+function recalcSpent() {
+  const sp = {}
+  ST.budgets.forEach(b => { sp[b.id] = 0 })
+  ;(ST.entries || []).forEach(e => {
+    const cat = e.cat || "uncategorized"
+    sp[cat] = (sp[cat] || 0) + (Number(e.amt) || 0)
+  })
+  ST.spent = sp
+}
+
+// ─── BUDGET HEALTH ────────────────────────────────────────
+function getBudgetHealth(tb, ts, left, sp) {
+  const entries = ST.entries || []
+
+  if (!entries.length || ts <= 0) {
+    return { text: 'Todavía no hay gastos este mes', color: 'var(--mut)' }
+  }
+
+  const cats = ST.budgets
+    .map(b => {
+      const spent  = Number(sp[b.id]) || 0
+      const budget = Number(b.budget) || 0
+      return {
+        label: b.label, icon: b.icon, color: cssColor(b.color),
+        spent, budget,
+        over: spent - budget,
+        pct: budget > 0 ? (spent / budget) * 100 : 0
+      }
+    })
+    .filter(x => x.budget > 0)
+
+  const worstOver = cats.filter(x => x.over > 0).sort((a, b) => b.over - a.over)[0]
+  if (worstOver) {
+    return { text: worstOver.icon + ' Te pasaste en ' + worstOver.label + ' por ' + fmt(worstOver.over), color: 'var(--red)' }
+  }
+
+  const warning = cats.filter(x => x.pct >= 80).sort((a, b) => b.pct - a.pct)[0]
+  if (warning) {
+    return { text: warning.icon + ' Ojo: ' + warning.label + ' va en ' + Math.round(warning.pct) + '%', color: '#D97706' }
+  }
+
+  const globalPct = tb > 0 ? (ts / tb) * 100 : 0
+  if (globalPct <= 35) return { text: 'Buen ritmo este mes', color: 'var(--grn)' }
+  if (globalPct <= 70) return { text: 'Vas bien este mes', color: 'var(--acc)' }
+  return { text: 'Cerca del límite mensual', color: '#D97706' }
+}
+
+// ─── RENDER ───────────────────────────────────────────────
+function renderHome() {
+  recalcSpent()
+
+  const sp   = ST.spent || {}
+  const tb   = ST.budgets.reduce((s, b) => s + (Number(b.budget) || 0), 0)
+  const ts   = Object.values(sp).reduce((s, v) => s + (Number(v) || 0), 0)
+  const left = tb - ts
+  const pct  = tb > 0 ? Math.min(100, (ts / tb) * 100) : 0
+
+  document.getElementById('hero-lbl').textContent = left < 0 ? 'SOBREPASADO' : 'DISPONIBLE'
+
+  const ha = document.getElementById('hero-amt')
+  ha.textContent = money0(Math.abs(left))
+  ha.style.color = left < 0 ? 'var(--red)' : 'var(--txt)'
+
+  document.getElementById('hero-sub').textContent = fmt(ts) + ' gastado de ' + fmt(tb)
+
+  const health   = getBudgetHealth(tb, ts, left, sp)
+  const healthEl = document.getElementById('hero-health')
+  if (healthEl) {
+    healthEl.textContent = health.text
+    healthEl.style.color = health.color
+  }
+
+  const f = document.getElementById('gbar-f')
+  f.style.width      = pct + '%'
+  f.style.background = pct > 90 ? 'var(--red)' : pct > 70 ? '#F59E0B' : 'var(--acc)'
+
+  document.getElementById('cats').innerHTML = ST.budgets.map(b => {
+    const s      = sp[b.id] || 0
+    const budget = Number(b.budget) || 0
+    const p      = budget > 0 ? Math.min(100, (s / budget) * 100) : 0
+    const ov     = s > budget
+    const col    = ov ? 'var(--red)' : cssColor(b.color)
+
+    return `<div class="cc" onclick="quickAdd('${esc(b.id)}')">
+      <div class="cc-top">
+        <div class="cc-l">
+          <span class="cc-icon">${esc(b.icon)}</span>
+          <div>
+            <div class="cc-name">${esc(b.label)}</div>
+            <div class="cc-pct">${Math.round(p)}% usado</div>
+          </div>
+        </div>
+        <div class="cc-r">
+          <div class="cc-spent" style="color:${col}">${fmt(s)}</div>
+          <div class="cc-budget">de ${fmt(budget)}</div>
+        </div>
+      </div>
+      <div class="bar-bg">
+        <div class="bar-f" style="width:${p}%;background:${col}"></div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function renderPresets() {
+  const el = document.getElementById('presets')
+  if (!el) return
+
+  const arr = ST.presets || []
+
+  if (!arr.length) {
+    el.innerHTML = '<button class="preset-btn" onclick="go(\'presets\')">＋ Crear preset</button>'
+    return
+  }
+
+  el.innerHTML = arr.map(p => {
+    const b = catById(p.cat) || {}
+    return `<button class="preset-btn" onclick="usePreset('${esc(p.id)}')">
+      ${esc(p.icon || b.icon || '⚡')} ${esc(p.desc)}
+      <span>${fmt(p.amt)}</span>
+    </button>`
+  }).join('')
+}
+
+function usePreset(id) {
+  const p = presetById(id)
+  if (!p) return
+
+  document.getElementById('in-amt').value  = Number(p.amt) || ''
+  document.getElementById('in-desc').value = p.desc || ''
+
+  if (catById(p.cat)) pickCat(p.cat, true)
+
+  chk()
+  toast('Preset listo')
+}
+
+function renderLog() {
+  const el  = document.getElementById('log-list')
+  const arr = [...(ST.entries || [])].reverse()
+
+  if (!arr.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-i">📭</div><div class="empty-t">Sin movimientos</div></div>'
+    return
+  }
+
+  el.innerHTML = arr.map(e => {
+    const b     = catById(e.cat) || {}
+    const color = cssColor(b.color || '#8B5CF6')
+
+    return `<div class="li" onclick="openEdit(${Number(e.id)})">
+      <div class="li-ico" style="background:${color}22">${esc(b.icon || '·')}</div>
+      <div class="li-info">
+        <div class="li-desc">${esc(e.desc || 'Gasto')}</div>
+        <div class="li-meta">${esc(b.label || e.cat || 'Sin categoría')}</div>
+      </div>
+      <div class="li-r">
+        <div class="li-amt">${fmt(e.amt)}</div>
+        <div class="li-date">${esc(e.date || '')}</div>
+      </div>
+      <button class="delbtn" onclick="event.stopPropagation(); del(${Number(e.id)})">×</button>
+    </div>`
+  }).join('')
+}
+
+function renderPills() {
+  renderSelectedCat()
+  renderCatPicker()
+}
+
+function renderSelectedCat() {
+  const el = document.getElementById('selected-cat')
+  if (!el) return
+
+  const b = selCat ? catById(selCat) : null
+
+  if (!b) {
+    el.innerHTML       = '<span class="selected-cat-icon">＋</span><span class="selected-cat-text">Elige una categoría</span><span class="selected-cat-arrow">›</span>'
+    el.style.borderColor = 'var(--bord)'
+    el.style.background  = 'var(--card)'
+    el.style.color       = 'var(--txt)'
+    return
+  }
+
+  const color          = cssColor(b.color)
+  el.style.borderColor = color
+  el.style.background  = color + '16'
+  el.style.color       = color
+  el.innerHTML = `
+    <span class="selected-cat-icon">${esc(b.icon)}</span>
+    <span class="selected-cat-text">${esc(b.label)}</span>
+    <span class="selected-cat-arrow">›</span>
+  `
+}
+
+function renderCatPicker() {
+  const el = document.getElementById('cat-picker-list')
+  if (!el) return
+
+  el.innerHTML = ST.budgets.map(b => `
+    <button
+      class="cat-picker-item ${selCat === b.id ? 'sel' : ''}"
+      style="--sc:${cssColor(b.color)};--sb:${cssColor(b.color)}16"
+      onclick="chooseCatFromPicker('${esc(b.id)}')">
+      <span class="cat-picker-icon">${esc(b.icon)}</span>
+      <span class="cat-picker-name">${esc(b.label)}</span>
+      <span class="cat-picker-budget">${fmt(b.budget)}</span>
+    </button>
+  `).join('')
+}
+
+function openCatPicker() {
+  renderCatPicker()
+  const m = document.getElementById('cat-picker-modal')
+  if (m) m.classList.add('show')
+}
+
+function closeCatPicker() {
+  const m = document.getElementById('cat-picker-modal')
+  if (m) m.classList.remove('show')
+}
+
+function chooseCatFromPicker(id) {
+  pickCat(id, true)
+  closeCatPicker()
+  toast('Categoría lista')
+}
+
+function renderEditCats() {
+  const el = document.getElementById('edit-cats')
+  if (!el) return
+
+  el.innerHTML = ST.budgets.map(b => `
+    <button
+      class="edit-pill ${editingCat === b.id ? 'sel' : ''}"
+      style="--sc:${cssColor(b.color)};--sb:${cssColor(b.color)}22"
+      onclick="pickEditCat('${esc(b.id)}')">
+      ${esc(b.icon)} ${esc(b.label)}
+    </button>
+  `).join('')
+}
+
+function renderWishEditCats() {
+  const el = document.getElementById('wish-edit-cats')
+  if (!el) return
+
+  el.innerHTML = ST.budgets.map(b => `
+    <button
+      class="edit-pill ${editingWishCat === b.id ? 'sel' : ''}"
+      style="--sc:${cssColor(b.color)};--sb:${cssColor(b.color)}22"
+      onclick="pickWishEditCat('${esc(b.id)}')">
+      ${esc(b.icon)} ${esc(b.label)}
+    </button>
+  `).join('')
+}
+
+function renderCategories() {
+  const el = document.getElementById('cat-list')
+  if (!el) return
+
+  if (!ST.budgets.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-i">◎</div><div class="empty-t">No tienes categorías todavía</div></div>'
+    return
+  }
+
+  el.innerHTML = ST.budgets.map(b => `
+    <div class="cat-card">
+      <div class="cat-top">
+        <span class="cat-dot" style="background:${cssColor(b.color)}"></span>
+        <span class="cat-title">${esc(b.icon)} ${esc(b.label)}</span>
+        <span class="cat-budget">${fmt(b.budget)}</span>
+      </div>
+      <div class="cat-actions">
+        <input
+          class="mini-in"
+          id="bud-${esc(b.id)}"
+          type="number"
+          inputmode="decimal"
+          value="${Number(b.budget) || 0}"
+          data-original="${Number(b.budget) || 0}"
+          oninput="markCatChanged('${esc(b.id)}')">
+        <button class="mini-save" id="save-${esc(b.id)}" onclick="saveCatBudget('${esc(b.id)}')">Save</button>
+        <button class="mini-del" onclick="deleteCategory('${esc(b.id)}')">Borrar</button>
+      </div>
+    </div>
+  `).join('')
+}
+
+function renderPresetManager() {
+  renderPresetCatPills()
+  renderPresetList()
+}
+
+function renderPresetCatPills() {
+  const el = document.getElementById('preset-cats')
+  if (!el) return
+
+  if (!newPresetCat || !catById(newPresetCat)) {
+    newPresetCat = ST.budgets[0] ? ST.budgets[0].id : null
+  }
+
+  el.innerHTML = ST.budgets.map(b => `
+    <button
+      class="preset-cat-pill ${newPresetCat === b.id ? 'sel' : ''}"
+      style="--sc:${cssColor(b.color)};--sb:${cssColor(b.color)}22"
+      onclick="pickPresetCat('${esc(b.id)}')">
+      ${esc(b.icon)} ${esc(b.label)}
+    </button>
+  `).join('')
+}
+
+function renderPresetList() {
+  const el = document.getElementById('preset-list')
+  if (!el) return
+
+  const arr = ST.presets || []
+
+  if (!arr.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-i">⚡</div><div class="empty-t">No tienes presets todavía</div></div>'
+    return
+  }
+
+  el.innerHTML = arr.map(p => {
+    const b = catById(p.cat) || {}
+    return `<div class="preset-card">
+      <div class="preset-card-icon">${esc(p.icon || b.icon || '⚡')}</div>
+      <div class="preset-card-info">
+        <div class="preset-card-title">${esc(p.desc)}</div>
+        <div class="preset-card-meta">${fmt(p.amt)} · ${esc(b.label || 'Sin categoría')}</div>
+      </div>
+      <button class="preset-card-del" onclick="deletePreset('${esc(p.id)}')">Borrar</button>
+    </div>`
+  }).join('')
+}
+
+function renderWishlistManager() {
+  renderWishCatPills()
+  renderWishList()
+}
+
+function renderWishCatPills() {
+  const el = document.getElementById('wish-cats')
+  if (!el) return
+
+  if (!newWishCat || !catById(newWishCat)) {
+    newWishCat = ST.budgets[0] ? ST.budgets[0].id : null
+  }
+
+  el.innerHTML = ST.budgets.map(b => `
+    <button
+      class="preset-cat-pill ${newWishCat === b.id ? 'sel' : ''}"
+      style="--sc:${cssColor(b.color)};--sb:${cssColor(b.color)}22"
+      onclick="pickWishCat('${esc(b.id)}')">
+      ${esc(b.icon)} ${esc(b.label)}
+    </button>
+  `).join('')
+}
+
+function renderWishList() {
+  const el = document.getElementById('wish-list')
+  if (!el) return
+
+  const arr = ST.wishes || []
+
+  if (!arr.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-i">✨</div><div class="empty-t">Tu wishlist está vacía</div></div>'
+    return
+  }
+
+  el.innerHTML = arr.map(w => {
+    const b = catById(w.cat) || {}
+    return `<div class="preset-card" onclick="openWishEdit('${esc(w.id)}')">
+      <div class="preset-card-icon">${esc(w.icon || '✨')}</div>
+      <div class="preset-card-info">
+        <div class="preset-card-title">${esc(w.desc)}</div>
+        <div class="preset-card-meta">${fmt(w.amt)} · ${esc(b.label || 'Sin categoría')}</div>
+      </div>
+      <div class="wish-actions">
+        <button class="wish-buy" onclick="event.stopPropagation(); buyWish('${esc(w.id)}')">Comprar</button>
+        <button class="wish-del" onclick="event.stopPropagation(); deleteWish('${esc(w.id)}')">Borrar</button>
+      </div>
+    </div>`
+  }).join('')
+}
+
+// ─── INTERACTION ──────────────────────────────────────────
+function markCatChanged(id) {
+  const input = document.getElementById('bud-' + id)
+  const btn   = document.getElementById('save-' + id)
+  if (!input || !btn) return
+
+  const raw      = input.value.trim()
+  const original = Number(input.dataset.original)
+  const current  = Number(raw)
+  const changed  = raw !== '' && !isNaN(current) && current > 0 && current !== original
+
+  btn.classList.toggle('show', changed)
+}
+
+function pickCat(id, silent) {
+  if (!catById(id)) return
+  selCat = id
+  renderSelectedCat()
+  renderCatPicker()
+  chk()
+  if (!silent) toast('Categoría lista')
+}
+
+function pickEditCat(id) {
+  if (!catById(id)) return
+  editingCat = id
+  renderEditCats()
+}
+
+function pickWishEditCat(id) {
+  if (!catById(id)) return
+  editingWishCat = id
+  renderWishEditCats()
+}
+
+function pickPresetCat(id) {
+  if (!catById(id)) return
+  newPresetCat = id
+  renderPresetCatPills()
+  chkPreset()
+}
+
+function pickWishCat(id) {
+  if (!catById(id)) return
+  newWishCat = id
+  renderWishCatPills()
+  chkWish()
+}
+
+function quickAdd(id) {
+  go('add')
+  setTimeout(() => pickCat(id, true), 30)
+}
+
+// ─── VALIDATION ───────────────────────────────────────────
+function chk() {
+  const a = parseFloat(document.getElementById('in-amt').value)
+  document.getElementById('sbtn').disabled = !(selCat && a > 0)
+}
+
+function chkCat() {
+  const label   = document.getElementById('cat-label').value.trim()
+  const budget  = parseFloat(document.getElementById('cat-budget').value)
+  const dup     = ST.budgets.some(b => b.label.trim().toLowerCase() === label.toLowerCase())
+  document.getElementById('cat-btn').disabled = !(label && budget > 0 && !dup)
+}
+
+function chkPreset() {
+  const btn = document.getElementById('preset-btn')
+  if (!btn) return
+  const desc = document.getElementById('preset-desc').value.trim()
+  const amt  = parseFloat(document.getElementById('preset-amt').value)
+  btn.disabled = !(desc && amt > 0 && newPresetCat)
+}
+
+function chkWish() {
+  const btn = document.getElementById('wish-btn')
+  if (!btn) return
+  const desc = document.getElementById('wish-desc').value.trim()
+  const amt  = parseFloat(document.getElementById('wish-amt').value)
+  btn.disabled = !(desc && amt > 0 && newWishCat)
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────
+function doSave() {
+  const a = parseFloat(document.getElementById('in-amt').value)
+  const d = document.getElementById('in-desc').value.trim()
+  const b = catById(selCat)
+
+  if (!selCat || isNaN(a) || a <= 0) return
+
+  const id    = Date.now() + Math.floor(Math.random() * 1000)
+  const today = new Date().toLocaleDateString("es-MX", { day: "2-digit", month: "short" })
+
+  const entry = { id, cat: selCat, amt: a, desc: d || (b ? b.label : selCat), date: today }
+
+  ST.entries = ST.entries || []
+  ST.entries.push(entry)
+  recalcSpent()
+  persistState()
+
+  document.getElementById('in-amt').value  = ''
+  document.getElementById('in-desc').value = ''
+  selCat = null
+  document.getElementById('sbtn').disabled = true
+
+  renderSelectedCat()
+  renderCatPicker()
+  renderHome()
+  renderLog()
+
+  toast('✓ Guardado')
+  go('home')
+}
+
+function openEdit(id) {
+  const e = entryById(id)
+  if (!e) { toast('No encontré ese gasto'); return }
+
+  editingId  = Number(e.id)
+  editingCat = e.cat
+
+  document.getElementById('edit-desc').value = e.desc || ''
+  document.getElementById('edit-amt').value  = Number(e.amt) || ''
+
+  renderEditCats()
+  document.getElementById('edit-modal').classList.add('show')
+}
+
+function closeEdit() {
+  editingId  = null
+  editingCat = null
+  document.getElementById('edit-modal').classList.remove('show')
+}
+
+function saveEditingEntry() {
+  const e = entryById(editingId)
+  if (!e) { closeEdit(); toast('No encontré ese gasto'); return }
+
+  const desc = document.getElementById('edit-desc').value.trim()
+  const amt  = parseFloat(document.getElementById('edit-amt').value)
+
+  if (!editingCat || isNaN(amt) || amt <= 0) { toast('Revisa monto/categoría'); return }
+
+  e.desc = desc || 'Gasto'
+  e.amt  = amt
+  e.cat  = editingCat
+
+  recalcSpent()
+  persistState()
+  renderHome()
+  renderLog()
+  closeEdit()
+
+  toast('✓ Gasto actualizado')
+}
+
+function saveEditingAsPreset() {
+  const desc = document.getElementById('edit-desc').value.trim()
+  const amt  = parseFloat(document.getElementById('edit-amt').value)
+
+  if (!desc || isNaN(amt) || amt <= 0 || !editingCat) { toast('Revisa los datos'); return }
+
+  const b    = catById(editingCat)
+  const id   = makeClientPresetId(desc)
+  const icon = b ? b.icon : '⚡'
+
+  ST.presets = ST.presets || []
+  ST.presets.push({ id, desc, amt, cat: editingCat, icon })
+  persistState()
+
+  renderPresets()
+  renderPresetManager()
+  closeEdit()
+
+  toast('✓ Preset creado')
+}
+
+function deleteEditingEntry() {
+  if (!editingId) return
+  const id = editingId
+
+  ST.entries = (ST.entries || []).filter(e => Number(e.id) !== Number(id))
+  recalcSpent()
+  persistState()
+
+  renderHome()
+  renderLog()
+  closeEdit()
+
+  toast('Gasto borrado')
+}
+
+function addCategory() {
+  const label  = document.getElementById('cat-label').value.trim()
+  const icon   = document.getElementById('cat-icon').value.trim() || '🏷️'
+  const budget = parseFloat(document.getElementById('cat-budget').value)
+  const color  = nextCategoryColor()
+  const dup    = ST.budgets.some(b => b.label.trim().toLowerCase() === label.toLowerCase())
+
+  if (!label || isNaN(budget) || budget <= 0 || dup) return
+
+  const id = makeClientCatId(label)
+  ST.budgets.push({ id, label, icon, budget, color })
+  recalcSpent()
+  persistState()
+
+  document.getElementById('cat-label').value  = ''
+  document.getElementById('cat-icon').value   = ''
+  document.getElementById('cat-budget').value = ''
+
+  renderHome()
+  renderPresets()
+  renderPills()
+  renderCategories()
+  renderPresetManager()
+  renderWishlistManager()
+  chkCat()
+
+  toast('✓ Categoría agregada')
+}
+
+function saveCatBudget(id) {
+  const input  = document.getElementById('bud-' + id)
+  const btn    = document.getElementById('save-' + id)
+  const budget = parseFloat(input ? input.value : '')
+
+  if (isNaN(budget) || budget <= 0) { toast('Budget inválido'); return }
+
+  const b = catById(id)
+  if (b) {
+    b.budget = budget
+    input.dataset.original = String(budget)
+    if (btn) btn.classList.remove('show')
+    renderHome()
+    renderCategories()
+  }
+
+  persistState()
+  toast('✓ Budget actualizado')
+}
+
+function deleteCategory(id) {
+  if (ST.budgets.length <= 1) { toast('Deja mínimo 1 categoría'); return }
+
+  const b = catById(id)
+  if (!b) { toast('No encontré esa categoría'); return }
+
+  ST.budgets  = ST.budgets.filter(x => x.id !== id)
+  ST.entries  = (ST.entries || []).filter(e => e.cat !== id)
+  ST.presets  = (ST.presets || []).filter(p => p.cat !== id)
+  ST.wishes   = (ST.wishes  || []).filter(w => w.cat !== id)
+
+  if (selCat         === id) selCat         = null
+  if (editingCat     === id) editingCat     = null
+  if (editingWishCat === id) editingWishCat = null
+  if (newPresetCat   === id) newPresetCat   = ST.budgets[0] ? ST.budgets[0].id : null
+  if (newWishCat     === id) newWishCat     = ST.budgets[0] ? ST.budgets[0].id : null
+
+  recalcSpent()
+  persistState()
+
+  renderHome()
+  renderPresets()
+  renderPills()
+  renderCategories()
+  renderLog()
+  renderEditCats()
+  renderPresetManager()
+  renderWishlistManager()
+  chk()
+
+  toast('Categoría borrada')
+}
+
+function addPreset() {
+  const desc = document.getElementById('preset-desc').value.trim()
+  const amt  = parseFloat(document.getElementById('preset-amt').value)
+  const icon = document.getElementById('preset-icon').value.trim() || (catById(newPresetCat) ? catById(newPresetCat).icon : '⚡')
+
+  if (!desc || isNaN(amt) || amt <= 0 || !newPresetCat) { toast('Revisa el preset'); return }
+
+  const id = makeClientPresetId(desc)
+  ST.presets = ST.presets || []
+  ST.presets.push({ id, desc, amt, cat: newPresetCat, icon })
+  persistState()
+
+  document.getElementById('preset-desc').value = ''
+  document.getElementById('preset-amt').value  = ''
+  document.getElementById('preset-icon').value = ''
+
+  renderPresets()
+  renderPresetManager()
+  chkPreset()
+
+  toast('✓ Preset creado')
+}
+
+function deletePreset(id) {
+  ST.presets = (ST.presets || []).filter(p => p.id !== id)
+
+  if (!Array.isArray(_data._settings.deletedPresetIds)) {
+    _data._settings.deletedPresetIds = []
+  }
+  if (!_data._settings.deletedPresetIds.includes(id)) {
+    _data._settings.deletedPresetIds.push(id)
+  }
+
+  persistState()
+  renderPresets()
+  renderPresetManager()
+
+  toast('Preset borrado')
+}
+
+function addWish() {
+  const desc = document.getElementById('wish-desc').value.trim()
+  const amt  = parseFloat(document.getElementById('wish-amt').value)
+  const icon = document.getElementById('wish-icon').value.trim() || '✨'
+
+  if (!desc || isNaN(amt) || amt <= 0 || !newWishCat) { toast('Revisa el wish'); return }
+
+  const id = makeClientWishId(desc)
+  ST.wishes = ST.wishes || []
+  ST.wishes.push({ id, desc, amt, cat: newWishCat, icon })
+  persistState()
+
+  document.getElementById('wish-desc').value = ''
+  document.getElementById('wish-amt').value  = ''
+  document.getElementById('wish-icon').value = ''
+
+  renderWishlistManager()
+  chkWish()
+
+  toast('✓ Wish guardado')
+}
+
+function openWishEdit(id) {
+  const w = wishById(id)
+  if (!w) { toast('No encontré ese wish'); return }
+
+  editingWishId  = w.id
+  editingWishCat = w.cat
+
+  document.getElementById('wish-edit-icon').value = w.icon || '✨'
+  document.getElementById('wish-edit-desc').value = w.desc || ''
+  document.getElementById('wish-edit-amt').value  = Number(w.amt) || ''
+
+  renderWishEditCats()
+  const m = document.getElementById('wish-edit-modal')
+  if (m) m.classList.add('show')
+}
+
+function closeWishEdit() {
+  editingWishId  = null
+  editingWishCat = null
+  const m = document.getElementById('wish-edit-modal')
+  if (m) m.classList.remove('show')
+}
+
+function getWishEditValues() {
+  const desc = document.getElementById('wish-edit-desc').value.trim()
+  const amt  = parseFloat(document.getElementById('wish-edit-amt').value)
+  const icon = document.getElementById('wish-edit-icon').value.trim() || '✨'
+  if (!desc || isNaN(amt) || amt <= 0 || !editingWishCat) return null
+  return { desc, amt, cat: editingWishCat, icon }
+}
+
+function saveEditingWish() {
+  const w    = wishById(editingWishId)
+  const vals = getWishEditValues()
+  if (!w || !vals) { toast('Revisa los datos'); return }
+
+  w.desc = vals.desc
+  w.amt  = vals.amt
+  w.cat  = vals.cat
+  w.icon = vals.icon
+
+  persistState()
+  renderWishlistManager()
+  closeWishEdit()
+
+  toast('✓ Wish actualizado')
+}
+
+function deleteEditingWish() {
+  if (!editingWishId) return
+  const id = editingWishId
+  closeWishEdit()
+  deleteWish(id)
+}
+
+function buyEditingWish() {
+  const w    = wishById(editingWishId)
+  const vals = getWishEditValues()
+  if (!w || !vals) { toast('Revisa los datos'); return }
+  if (!catById(vals.cat)) { toast('Categoría inválida'); return }
+
+  const entryId = Date.now() + Math.floor(Math.random() * 1000)
+  const today   = new Date().toLocaleDateString("es-MX", { day: "2-digit", month: "short" })
+
+  ST.entries = ST.entries || []
+  ST.entries.push({ id: entryId, desc: vals.desc, amt: vals.amt, cat: vals.cat, date: today })
+  ST.wishes  = (ST.wishes || []).filter(x => x.id !== w.id)
+  recalcSpent()
+  persistState()
+
+  renderHome()
+  renderLog()
+  renderWishlistManager()
+  closeWishEdit()
+
+  toast('✓ Comprado y enviado al log')
+}
+
+function deleteWish(id) {
+  ST.wishes = (ST.wishes || []).filter(w => w.id !== id)
+  persistState()
+  renderWishlistManager()
+  toast('Wish borrado')
+}
+
+function buyWish(id) {
+  const w = wishById(id)
+  if (!w) { toast('No encontré ese wish'); return }
+  if (!catById(w.cat)) { toast('Categoría inválida'); return }
+
+  const entryId = Date.now() + Math.floor(Math.random() * 1000)
+  const today   = new Date().toLocaleDateString("es-MX", { day: "2-digit", month: "short" })
+
+  ST.entries = ST.entries || []
+  ST.entries.push({ id: entryId, desc: w.desc, amt: Number(w.amt) || 0, cat: w.cat, date: today })
+  ST.wishes  = (ST.wishes || []).filter(x => x.id !== id)
+  recalcSpent()
+  persistState()
+
+  renderHome()
+  renderLog()
+  renderWishlistManager()
+
+  toast('✓ Comprado y enviado al log')
+}
+
+function del(id) {
+  ST.entries = (ST.entries || []).filter(e => Number(e.id) !== Number(id))
+  recalcSpent()
+  persistState()
+  renderLog()
+  renderHome()
+  toast('Eliminado')
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.classList.add('show')
+  clearTimeout(window._toastTimer)
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 1700)
+}
+
+function go(s) {
+  closeEdit()
+  closeWishEdit()
+  closeCatPicker()
+
+  document.querySelectorAll('.screen').forEach(x => x.classList.remove('on'))
+  const screen = document.getElementById('s-' + s)
+  if (screen) screen.classList.add('on')
+
+  document.querySelectorAll('.nb').forEach(btn => {
+    btn.classList.toggle('on', btn.dataset.tab === s)
+  })
+
+  if (s === 'add')     { renderPresets(); renderPills() }
+  if (s === 'cats')    renderCategories()
+  if (s === 'presets') renderPresetManager()
+  if (s === 'wishes')  renderWishlistManager()
+  if (s === 'log')     renderLog()
+  if (s === 'home')    renderHome()
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+renderHome()
+renderPresets()
+renderPills()
+renderCategories()
+renderLog()
+renderPresetManager()
+renderWishlistManager()
+renderWishEditCats()
+
+// ─── SERVICE WORKER ───────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {})
+}
+</script>
+</body>
+</html>
